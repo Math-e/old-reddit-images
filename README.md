@@ -10,3 +10,5 @@ You can set a max height for the images in the options.
 - Not working when loading new comments
 - Test on Android version
 - Chrome version
+
+#### Built with web-ext: `web-ext build`
