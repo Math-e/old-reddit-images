@@ -7,7 +7,6 @@ You can set a max height for the images in the options.
 ### To do:
 
 - The same function for *i.reddit* or *preview.reddit* links on some posts
-- Not working when loading new comments
 - Test on Android version
 - Chrome version
 
