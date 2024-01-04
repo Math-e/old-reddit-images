@@ -1,4 +1,4 @@
-// Swaps the text '<image>' links to the actual image with _blank link
+// Swaps the text '<image>' and 'preview.redd.it' links to the actual image with _blank link
 function loadImages(options) {
 
   // '.md a' are links in comments and some sidebar links
@@ -6,7 +6,7 @@ function loadImages(options) {
   links.forEach(function (value, index, listObj) {
 
     // pick links with '<image>' text, which are the commented images that don't load in old reddit
-    if (value.text == "<image>") {
+    if (value.text == "<image>" || value.text.startsWith('https://preview.redd.it/')) {
 
       var newElement = document.createElement("img");
       newElement.src = value.href;
