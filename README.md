@@ -6,7 +6,6 @@ You can set a max height for the images in the options.
 
 ### To do:
 
-- The same function for *i.reddit* or *preview.reddit* links on some posts
 - Test on Android version
 - Chrome version
 
