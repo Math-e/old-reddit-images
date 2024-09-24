@@ -12,7 +12,7 @@ function loadImages(options) {
       newElement.src = element.href;
       newElement.style['max-height'] = options.maxHeight + "px";
       // change <a> target depending on config
-      element['target'] = options.openTab
+      element['target'] = options.openTab;
       // insert image by swapping the text under <a>, so the image stays clickable
       element.firstChild.replaceWith(newElement);
     }
@@ -27,10 +27,21 @@ function moreComments(options) {
     let moreCommentsButtons = document.querySelectorAll(".morecomments a");
 
     moreCommentsButtons.forEach(function (element, index, listObj) {
-      element.addEventListener("click", loadImages(options))
-      element.addEventListener("click", moreComments(options))
+      element.addEventListener("click", loadImages(options));
+      element.addEventListener("click", moreComments(options));
     });
   }, 5000);
+
+  // buttons to expand the text post that might contain 'preview.redd.it' links
+  let expandos = querySelectorAll("div .expando-uninitialized")
+  var observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      callback(entry.intersectionRatio > 0);
+    });
+  }, options);
+
+  observer.observe(expandos);
+  
 }
 
 
