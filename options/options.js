@@ -12,7 +12,6 @@ function restoreOptions() {
     document.querySelector("#maxHeight").value = result.maxHeight || "500";
     // check the radio for OpenTab, set a default value if unavailable
     openTab = result.openTab || "newTab";
-    console.log(openTab);
     document.querySelector("#" + openTab).checked = true;
   }
 
@@ -26,7 +25,7 @@ function restoreOptions() {
 
 // load saved values in the options screen
 document.addEventListener("DOMContentLoaded", restoreOptions);
-// options screen autosaves changes whenever inputs are touched
+// options input autosaves changes whenever inputs are touched
 document.querySelectorAll("input").forEach(item => {
   item.addEventListener("input", saveOption);
 });
