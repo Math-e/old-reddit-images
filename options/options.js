@@ -11,7 +11,7 @@ function restoreOptions() {
   function setCurrentChoice(result) {
     document.querySelector("#maxHeight").value = result.maxHeight || "500";
     // check the radio for OpenTab, set a default value if unavailable
-    openTab = result.openTab || "newTab";
+    openTab = result.openTab || "_blank";
     document.querySelector("#" + openTab).checked = true;
   }
 
