@@ -3,16 +3,18 @@ function loadImages(options) {
 
   // '.md a' are links in comments and some sidebar links
   let links = document.querySelectorAll(".md a");
-  links.forEach(function (value, index, listObj) {
+  links.forEach(function (element, index, listObj) {
 
-    // pick links with '<image>' text, which are the commented images that don't load in old reddit
-    if (value.text == "<image>" || value.text.startsWith('https://preview.redd.it/')) {
+    // pick links with '<image>' text, which are the commented images that don't load in old reddit, and inserted images which get the pure link as text
+    if (element.text == "<image>" || element.text.startsWith('https://preview.redd.it/')) {
 
       var newElement = document.createElement("img");
-      newElement.src = value.href;
+      newElement.src = element.href;
       newElement.style['max-height'] = options.maxHeight + "px";
+      // change <a> target depending on config
+      element['target'] = options.openTab
       // insert image by swapping the text under <a>, so the image stays clickable
-      value.firstChild.replaceWith(newElement);
+      element.firstChild.replaceWith(newElement);
     }
   });
 }
@@ -24,9 +26,9 @@ function moreComments(options) {
   setTimeout(function () {
     let moreCommentsButtons = document.querySelectorAll(".morecomments a");
 
-    moreCommentsButtons.forEach(function (value, index, listObj) {
-      value.addEventListener("click", loadImages(options))
-      value.addEventListener("click", moreComments(options))
+    moreCommentsButtons.forEach(function (element, index, listObj) {
+      element.addEventListener("click", loadImages(options))
+      element.addEventListener("click", moreComments(options))
     });
   }, 5000);
 }
@@ -41,6 +43,9 @@ function onGot(options) {
   if (!options.maxHeight) {
     options.maxHeight = "500";
   }
+  if (!options.openTab) {
+    options.openTab = "_blank";
+  }
   // after loading option, swap the links to images in DOM
   loadImages(options);
   // add event to 'load more comments' buttons for the DOM update
@@ -48,5 +53,5 @@ function onGot(options) {
 }
 
 // loads options and starts the script
-const getting = browser.storage.sync.get("maxHeight");
+const getting = browser.storage.sync.get(["maxHeight", "openTab"]);
 getting.then(onGot, onError);
