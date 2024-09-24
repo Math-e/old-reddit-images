@@ -18,5 +18,7 @@ function restoreOptions() {
   getting.then(setCurrentChoice, onError);
 }
 
+// load saved values in the options screen
 document.addEventListener("DOMContentLoaded", restoreOptions);
+// height value in options screen is autosaved whenever it's changed
 document.querySelector("#maxHeight").addEventListener("input", saveOptions);
