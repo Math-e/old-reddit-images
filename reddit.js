@@ -19,29 +19,41 @@ function loadImages(options) {
   });
 }
 
+function expandoVisibility(element, callback){
+  var root = {
+    root: document.documentElement
+  }
+  var observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      callback(entry.intersectionRatio > 0);
+    });
+  }, root);
+
+  observer.observe(element);
+}
+
 // add event to rerun loadImages() when DOM is updated from 'load more comments' click
 function moreComments(options) {
   // waits new comments to load for 5 seconds, considering worst case scenarios
   // TODO: change waiting with setTimeout to elements update recognition
   setTimeout(function () {
-    let moreCommentsButtons = document.querySelectorAll(".morecomments a");
-
+    let moreCommentsButtons = document.querySelectorAll("span .morecomments > a");
     moreCommentsButtons.forEach(function (element, index, listObj) {
       element.addEventListener("click", loadImages(options));
-      element.addEventListener("click", moreComments(options));
+      //element.addEventListener("click", moreComments(options));
     });
   }, 5000);
 
   // buttons to expand the text post that might contain 'preview.redd.it' links
-  let expandos = querySelectorAll("div .expando-uninitialized")
-  var observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      callback(entry.intersectionRatio > 0);
-    });
-  }, options);
+  let expandos = document.querySelectorAll("div .expando-uninitialized");
+  expandos.forEach(expando => {
+    expandoVisibility(expando, visible => {
+      if (visible){
+        expando.addEventListener("DOMContentLoaded", loadImages(options))
+      }
+    })
+  })
 
-  observer.observe(expandos);
-  
 }
 
 
