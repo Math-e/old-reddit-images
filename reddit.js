@@ -19,6 +19,7 @@ function loadImages(options) {
   });
 }
 
+// triggers when the grey "expand post" are clicked
 function expandoVisibility(element, callback){
   var root = {
     root: document.documentElement
