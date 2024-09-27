@@ -18,37 +18,27 @@ function loadImages(elements, options) {
   });
 }
 
-function watchClass(element, elClass, options){
-  let prevState = element.classList.contains(elClass);
-  const observer = new MutationObserver((mutations) => { 
-    mutations.forEach((mutation) => {
-        const { target } = mutation;
-        if (mutation.attributeName === 'class') {
-            const currentState = mutation.target.classList.contains(elClass);
-            if (prevState !== currentState) {
-                prevState = currentState;
-                loadImages(element, options);
-            }
-        }
-    });
-});
- observer.observe(element, { 
-  attributes: true, 
-  attributeOldValue: true, 
-  attributeFilter: ['class'] 
-  });
+// the observer, which triggers whenever a DOM element and its children is updated
+function watchMutation(element, options){
+  const callback = (mutationList, observer) => {
+    for (const mutation of mutationList) {
+      // for comment section
+      if (mutation.type === "childList") {
+        loadImages(element, options);
+      // for expandos
+      } else if (mutation.type === "attributes") {
+        loadImages(element, options);
+      }
+    }
+  };
+  const observer = new MutationObserver(callback);
+  const config = { attributes: true, childList: true, subtree: true };
+  observer.observe(element, config);
 }
 
-
-// add event to rerun loadImages() when DOM is updated from 'load more comments' click
-function moreComments(element, options) {
-  // waits new comments to load for 5 seconds, considering worst case scenarios
-  // TODO: change waiting with setTimeout to elements update recognition
-    let moreCommentsButtons = element.querySelectorAll(".morecomments > a");
-    moreCommentsButtons.forEach(el => {
-      // 'nestedlisting' is the comment section, run the functions when it is updated
-      watchClass(el, 'nestedlisting', options);
-    });
+function commentsUpdate(element, options){
+  let el = element.querySelector('div .nestedlisting');
+  watchMutation(el, options);
 }
 
 function watchExpandos(element, options){
@@ -56,7 +46,7 @@ function watchExpandos(element, options){
   let expandos = element.querySelectorAll("div .expando-uninitialized");
   // when their hidden section is updated, load the images
   expandos.forEach(ex => {
-    watchClass(ex, 'expando-uninitialized', options);
+    watchMutation(ex, options);
   })
 }
 
@@ -73,12 +63,12 @@ function onGot(options) {
   if (!options.openTab) {
     options.openTab = "_blank";
   }
-  //
+  // the "expand (text) post" grey buttons, which take a few miliseconds to loads and may contain a 'preview.redd.it' link
   watchExpandos(document, options);
-  // after loading option, swap the links to images in DOM
+  // swap the links to images in root DOM
   loadImages(document, options);
-  // add event to 'load more comments' buttons for the DOM update //// needs update
-  // moreComments(document, options);
+  // reruns loadImages() when comment section is updated (for clicking "load more comments"). Might need performance improvements.
+  commentsUpdate(document.querySelector("div .commentarea"), options);
 }
 
 // loads options and starts the script
