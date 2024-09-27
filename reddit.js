@@ -1,9 +1,8 @@
-// Swaps the text '<image>' and 'preview.redd.it' links to the actual image with _blank link
-function loadImages(options) {
-
+// Swaps the text '<image>' and 'preview.redd.it' links to the actual image with link
+function loadImages(elements, options) {
   // '.md a' are links in comments and some sidebar links
-  let links = document.querySelectorAll(".md a");
-  links.forEach(function (element, index, listObj) {
+  let links = elements.querySelectorAll(".md a");
+  links.forEach(element => {
 
     // pick links with '<image>' text, which are the commented images that don't load in old reddit, and inserted images which get the pure link as text
     if (element.text == "<image>" || element.text.startsWith('https://preview.redd.it/')) {
@@ -19,42 +18,46 @@ function loadImages(options) {
   });
 }
 
-// triggers when the grey "expand post" are clicked
-function expandoVisibility(element, callback){
-  var root = {
-    root: document.documentElement
-  }
-  var observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      callback(entry.intersectionRatio > 0);
+function watchClass(element, elClass, options){
+  let prevState = element.classList.contains(elClass);
+  const observer = new MutationObserver((mutations) => { 
+    mutations.forEach((mutation) => {
+        const { target } = mutation;
+        if (mutation.attributeName === 'class') {
+            const currentState = mutation.target.classList.contains(elClass);
+            if (prevState !== currentState) {
+                prevState = currentState;
+                loadImages(element, options);
+            }
+        }
     });
-  }, root);
-
-  observer.observe(element);
+});
+ observer.observe(element, { 
+  attributes: true, 
+  attributeOldValue: true, 
+  attributeFilter: ['class'] 
+  });
 }
 
+
 // add event to rerun loadImages() when DOM is updated from 'load more comments' click
-function moreComments(options) {
+function moreComments(element, options) {
   // waits new comments to load for 5 seconds, considering worst case scenarios
   // TODO: change waiting with setTimeout to elements update recognition
-  setTimeout(function () {
-    let moreCommentsButtons = document.querySelectorAll("span .morecomments > a");
-    moreCommentsButtons.forEach(function (element, index, listObj) {
-      element.addEventListener("click", loadImages(options));
-      //element.addEventListener("click", moreComments(options));
+    let moreCommentsButtons = element.querySelectorAll(".morecomments > a");
+    moreCommentsButtons.forEach(el => {
+      // 'nestedlisting' is the comment section, run the functions when it is updated
+      watchClass(el, 'nestedlisting', options);
     });
-  }, 5000);
+}
 
+function watchExpandos(element, options){
   // buttons to expand the text post that might contain 'preview.redd.it' links
-  let expandos = document.querySelectorAll("div .expando-uninitialized");
-  expandos.forEach(expando => {
-    expandoVisibility(expando, visible => {
-      if (visible){
-        expando.addEventListener("DOMContentLoaded", loadImages(options))
-      }
-    })
+  let expandos = element.querySelectorAll("div .expando-uninitialized");
+  // when their hidden section is updated, load the images
+  expandos.forEach(ex => {
+    watchClass(ex, 'expando-uninitialized', options);
   })
-
 }
 
 
@@ -70,10 +73,12 @@ function onGot(options) {
   if (!options.openTab) {
     options.openTab = "_blank";
   }
+  //
+  watchExpandos(document, options);
   // after loading option, swap the links to images in DOM
-  loadImages(options);
-  // add event to 'load more comments' buttons for the DOM update
-  moreComments(options);
+  loadImages(document, options);
+  // add event to 'load more comments' buttons for the DOM update //// needs update
+  // moreComments(document, options);
 }
 
 // loads options and starts the script
