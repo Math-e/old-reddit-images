@@ -72,5 +72,5 @@ function onGot(options) {
 }
 
 // loads options and starts the script
-const getting = browser.storage.sync.get(["maxHeight", "openTab"]);
+const getting = chrome.storage.local.get(["maxHeight", "openTab"]);
 getting.then(onGot, onError);

@@ -1,9 +1,9 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Old Reddit Images",
   "short_name": "ORM",
   "version": "1.0.2",
-  "description": "Displays linked images in comments on Old Reddit.",
+  "description": "Displays linked images on Old Reddit.",
   "icons": {
     "48": "icons/48.png",
     "96": "icons/96.png"
@@ -20,12 +20,6 @@
   ],
   "options_ui": {
     "page": "options/options.html"
-  },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "{48124465-8e90-4878-b2a4-f1ffd25d56e0}",
-      "strict_min_version": "57.0"
-    }
   },
   "permissions": [
     "storage"
