@@ -19,13 +19,13 @@ function loadImages(elements, options) {
 }
 
 // the observer, which triggers whenever a DOM element and its children is updated
-function watchMutation(element, options){
+function watchMutation(element, options) {
   const callback = (mutationList, observer) => {
     for (const mutation of mutationList) {
       // for comment section
       if (mutation.type === "childList") {
         loadImages(element, options);
-      // for expandos
+        // for expandos
       } else if (mutation.type === "attributes") {
         loadImages(element, options);
       }
@@ -36,18 +36,18 @@ function watchMutation(element, options){
   observer.observe(element, config);
 }
 
-function commentsUpdate(element, options){
+function commentsUpdate(element, options) {
   let el = element.querySelector('div .nestedlisting');
   watchMutation(el, options);
 }
 
-function watchExpandos(element, options){
+function watchExpandos(element, options) {
   // buttons to expand the text post that might contain 'preview.redd.it' links
   let expandos = element.querySelectorAll("div .expando-uninitialized");
   // when their hidden section is updated, load the images
   expandos.forEach(ex => {
     watchMutation(ex, options);
-  })
+  });
 }
 
 
