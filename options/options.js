@@ -1,8 +1,11 @@
+// Firefox exposes the promise-based 'browser' namespace, Chromium only 'chrome'
+const api = globalThis.browser ?? globalThis.chrome;
+
 function saveOption(e) {
   e.preventDefault();
   const param = e.target.name
   const value = e.target.value
-  browser.storage.sync.set({
+  api.storage.sync.set({
     [param]: value
   });
 }
@@ -11,7 +14,7 @@ function restoreOptions() {
   function setCurrentChoice(result) {
     document.querySelector("#maxHeight").value = result.maxHeight || "500";
     // check the radio for OpenTab, set a default value if unavailable
-    openTab = result.openTab || "_blank";
+    const openTab = result.openTab || "_blank";
     document.querySelector("#" + openTab).checked = true;
   }
 
@@ -19,7 +22,7 @@ function restoreOptions() {
     console.log(`Error: ${error}`);
   }
 
-  let getting = browser.storage.sync.get(["maxHeight", "openTab"]);
+  let getting = api.storage.sync.get(["maxHeight", "openTab"]);
   getting.then(setCurrentChoice, onError);
 }
 

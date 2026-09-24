@@ -1,3 +1,6 @@
+// Firefox exposes the promise-based 'browser' namespace, Chromium only 'chrome'
+const api = globalThis.browser ?? globalThis.chrome;
+
 // Swaps the text '<image>' and 'preview.redd.it' links to the actual image with link
 function loadImages(elements, options) {
   // '.md a' are links in comments and some sidebar links
@@ -20,16 +23,13 @@ function loadImages(elements, options) {
 
 // the observer, which triggers whenever a DOM element and its children is updated
 function watchMutation(element, options) {
+  if (!element) {
+    return;
+  }
+  // childList catches the comment section updates, attributes the expandos.
+  // Mutations arrive in batches, so a single scan per batch is enough.
   const callback = (mutationList, observer) => {
-    for (const mutation of mutationList) {
-      // for comment section
-      if (mutation.type === "childList") {
-        loadImages(element, options);
-        // for expandos
-      } else if (mutation.type === "attributes") {
-        loadImages(element, options);
-      }
-    }
+    loadImages(element, options);
   };
   const observer = new MutationObserver(callback);
   const config = { attributes: true, childList: true, subtree: true };
@@ -37,6 +37,10 @@ function watchMutation(element, options) {
 }
 
 function commentsUpdate(element, options) {
+  // pages without a comment section (front page, subreddit listings)
+  if (!element) {
+    return;
+  }
   let el = element.querySelector('div .nestedlisting');
   watchMutation(el, options);
 }
@@ -72,5 +76,5 @@ function onGot(options) {
 }
 
 // loads options and starts the script
-const getting = browser.storage.sync.get(["maxHeight", "openTab"]);
+const getting = api.storage.sync.get(["maxHeight", "openTab"]);
 getting.then(onGot, onError);
