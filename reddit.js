@@ -4,13 +4,13 @@ const api = globalThis.browser ?? globalThis.chrome;
 // Swaps the text '<image>' and 'preview.redd.it' links to the actual image with link
 function loadImages(elements, options) {
   // '.md a' are links in comments and some sidebar links
-  let links = elements.querySelectorAll(".md a");
+  const links = elements.querySelectorAll(".md a");
   links.forEach(element => {
 
     // pick links with '<image>' text, which are the commented images that don't load in old reddit, and inserted images which get the pure link as text
     if (element.text == "<image>" || element.text.startsWith('https://preview.redd.it/')) {
 
-      var newElement = document.createElement("img");
+      const newElement = document.createElement("img");
       newElement.src = element.href;
       newElement.style['max-height'] = options.maxHeight + "px";
       // change <a> target depending on config
@@ -41,13 +41,13 @@ function commentsUpdate(element, options) {
   if (!element) {
     return;
   }
-  let el = element.querySelector('div .nestedlisting');
+  const el = element.querySelector('div .nestedlisting');
   watchMutation(el, options);
 }
 
 function watchExpandos(element, options) {
   // buttons to expand the text post that might contain 'preview.redd.it' links
-  let expandos = element.querySelectorAll("div .expando-uninitialized");
+  const expandos = element.querySelectorAll("div .expando-uninitialized");
   // when their hidden section is updated, load the images
   expandos.forEach(ex => {
     watchMutation(ex, options);
