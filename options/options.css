@@ -1,3 +1,14 @@
+:root {
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1c1b22;
+    color: #fbfbfe;
+  }
+}
+
 input {
   padding: 10px;
   font-size: 18px;
